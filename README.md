@@ -40,7 +40,7 @@ POST /single-scrape
 **Body:**
 ```json
 {
-  "url": "https://www.lockhartisd.org/"
+  "url": "https://example.com"
 }
 ```
 
@@ -53,7 +53,7 @@ POST /deep-scrape
 **Body:**
 ```json
 {
-  "url": "https://www.lockhartisd.org/"
+  "url": "https://example.com"
 }
 ```
 
@@ -99,17 +99,17 @@ The scraper automatically detects containers in this order:
 # Single page scraping
 curl -X POST "http://localhost:8001/single-scrape" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://www.lockhartisd.org/"}'
+  -d '{"url": "https://example.com"}'
 
 # Deep scraping (watch console for progress)
 curl -X POST "http://localhost:8001/deep-scrape" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://www.lockhartisd.org/"}'
+  -d '{"url": "https://example.com"}'
 
 # Download deep scrape as DOCX
 curl -X POST "http://localhost:8001/deep-scrape-docx" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://www.lockhartisd.org/"}' \
+  -d '{"url": "https://example.com"}' \
   --output deep_scrape_results.docx
 ```
 
