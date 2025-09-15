@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebScraper Pro - Advanced Web Data Extraction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-bg: #0f0f23;
+            --card-bg: #1a1a2e;
+            --card-hover: #16213e;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --accent-blue: #4285f4;
+            --accent-green: #34a853;
+            --accent-orange: #fbbc04;
+            --accent-red: #ea4335;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 25% 25%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 75% 75%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .header {
+            background: var(--primary-gradient);
+            padding: 32px 0;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-top: 8px;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .input-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .input-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--primary-gradient);
+        }
+        
+        .input-section:hover {
+            background: var(--card-hover);
+            box-shadow: var(--shadow-heavy);
+            transform: translateY(-2px);
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .radio-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s;
+        }
+        
+        .radio-option:hover::before {
+            left: 100%;
+        }
+        
+        .radio-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .radio-option.active {
+            border-color: var(--accent-blue);
+            background: rgba(66, 133, 244, 0.1);
+            box-shadow: 0 0 0 1px var(--accent-blue);
+        }
+        
+        .radio-option input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-secondary);
+            border-radius: 50%;
+            margin: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .radio-option input[type="radio"]:checked {
+            border-color: var(--accent-blue);
+            background: var(--accent-blue);
+        }
+        
+        .radio-option input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .radio-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .batch-options {
+            background: rgba(66, 133, 244, 0.1);
+            border: 1px solid rgba(66, 133, 244, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .batch-options.hidden {
+            opacity: 0;
+            max-height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        .url-input-container {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        
+        .input-label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        input[type="url"] {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        input[type="url"]:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        input[type="url"]::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: var(--success-gradient);
+            color: white;
+            box-shadow: 0 4px 16px rgba(79, 172, 254, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(79, 172, 254, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .progress-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-light);
+            overflow: hidden;
+        }
+        
+        .progress-header {
+            background: linear-gradient(135deg, rgba(66, 133, 244, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .progress-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .progress-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: rgba(52, 168, 83, 0.2);
+            color: var(--accent-green);
+        }
+        
+        .progress-container {
+            padding: 0;
+            height: 500px;
+            overflow-y: auto;
+            background: var(--dark-bg);
+        }
+        
+        .progress-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .progress-container::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+        
+        .progress-container::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .progress-container::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+        
+        .progress-line {
+            padding: 12px 32px;
+            border-left: 4px solid transparent;
+            position: relative;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .progress-line:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .start {
+            border-left-color: var(--accent-blue);
+            color: #66ccff;
+            background: rgba(66, 133, 244, 0.1);
+        }
+        
+        .progress {
+            border-left-color: var(--accent-orange);
+            color: #ffcc66;
+        }
+        
+        .info {
+            border-left-color: #17a2b8;
+            color: #66ddff;
+        }
+        
+        .found {
+            border-left-color: #6f42c1;
+            color: #cc66ff;
+        }
+        
+        .scraping {
+            border-left-color: var(--accent-orange);
+            color: #ffcc00;
+            background: rgba(251, 188, 4, 0.1);
+        }
+        
+        .success {
+            border-left-color: var(--accent-green);
+            color: #66ff66;
+            background: rgba(52, 168, 83, 0.1);
+        }
+        
+        .error {
+            border-left-color: var(--accent-red);
+            color: #ff6666;
+            background: rgba(234, 67, 53, 0.1);
+        }
+        
+        .complete {
+            border-left-color: var(--accent-green);
+            color: var(--accent-green);
+            font-weight: 600;
+            background: rgba(52, 168, 83, 0.2);
+        }
+        
+        .progress-line::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: inherit;
+            opacity: 0.6;
+        }
+        
+        .progress-timestamp {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+        
+        .progress-message {
+            color: inherit;
+            font-weight: 500;
+            margin-left: 12px;
+        }
+        .results-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-top: 32px;
+            box-shadow: var(--shadow-light);
+            overflow: hidden;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .results-header {
+            background: linear-gradient(135deg, rgba(52, 168, 83, 0.1), rgba(79, 172, 254, 0.1));
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .results-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .download-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .download-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .download-btn.json {
+            background: var(--accent-blue);
+            color: white;
+        }
+        
+        .download-btn.docx {
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .results-stats {
+            padding: 24px 32px;
+            background: var(--dark-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card.success .stat-value { color: var(--accent-green); }
+        .stat-card.failed .stat-value { color: var(--accent-red); }
+        .stat-card.total .stat-value { color: var(--accent-blue); }
+        .stat-card.containers .stat-value { color: var(--accent-orange); }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .results-container {
+            max-height: 70vh;
+            overflow-y: auto;
+            background: var(--dark-bg);
+        }
+        
+        .results-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .results-container::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+        
+        .results-container::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .result-item {
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-header-clickable {
+            padding: 16px 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+        }
+        
+        .result-header-clickable:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .result-header-clickable.active {
+            background: rgba(66, 133, 244, 0.1);
+        }
+        
+        .result-summary {
+            flex: 1;
+        }
+        
+        .result-chevron {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+        
+        .result-chevron.expanded {
+            transform: rotate(90deg);
+        }
+        
+        .result-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .result-details.expanded {
+            max-height: 1000px;
+        }
+        
+        .result-details-content {
+            padding: 20px 24px;
+        }
+        
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .result-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            flex-shrink: 0;
+        }
+        
+        .result-url {
+            color: var(--accent-blue);
+            font-weight: 500;
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+        
+        .result-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .result-content {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-height: none;
+            overflow-y: visible;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .result-meta {
+            background: rgba(66, 133, 244, 0.1);
+            border-left: 3px solid var(--accent-blue);
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .result-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .result-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .result-content::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .header {
+                padding: 24px 0;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .radio-option {
+                padding: 12px 16px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .stats-bar {
+                gap: 16px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .input-section,
+            .progress-section,
+            .results-section {
+                padding: 20px;
+            }
+            
+            .progress-header,
+            .results-header,
+            .results-stats {
+                padding: 16px 20px;
+            }
+            
+            .progress-line,
+            .result-item {
+                padding: 12px 20px;
+            }
+            
+            .download-buttons {
+                width: 100%;
+                justify-content: stretch;
+            }
+            
+            .download-btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 12px;
+            }
+            
+            h1 {
+                font-size: 1.75rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .input-section,
+            .progress-section,
+            .results-section {
+                padding: 16px;
+                margin-bottom: 20px;
+            }
+            
+            .progress-container {
+                height: 400px;
+            }
+            
+            .results-container {
+                max-height: 400px;
+            }
+        }
+        
+        /* Dark mode enhancements */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --dark-bg: #0a0a0f;
+                --card-bg: #141420;
+                --card-hover: #1a1a2e;
+            }
+        }
+        
+        /* Loading and animation utilities */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .success-animation {
+            animation: successPulse 0.6s ease-out;
+        }
+        
+        @keyframes successPulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+    
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-spider"></i>
+                    </div>
+                    <div>
+                        <h1>WebScraper Pro</h1>
+                        <div class="subtitle">Advanced Web Data Extraction Platform</div>
+                    </div>
+                </div>
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalScraped">0</span>
+                        <span class="stat-label">Pages Scraped</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="successRate">100%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="avgSpeed">0s</span>
+                        <span class="stat-label">Avg Speed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="input-section">
+            <div class="section-title">
+                <i class="fas fa-cog"></i>
+                Scraping Configuration
+            </div>
+            
+            <div class="radio-group">
+                <label class="radio-option active" id="singleOption">
+                    <input type="radio" name="scrapeType" value="single" id="singleRadio">
+                    <div class="radio-label">
+                        <i class="fas fa-file-alt"></i>
+                        <div>
+                            <strong>Single Page</strong>
+                            <br><small>Quick single URL scrape</small>
+                        </div>
+                    </div>
+                </label>
+                
+                <label class="radio-option" id="deepOption">
+                    <input type="radio" name="scrapeType" value="deep" id="deepRadio">
+                    <div class="radio-label">
+                        <i class="fas fa-stream"></i>
+                        <div>
+                            <strong>Deep Sequential</strong>
+                            <br><small>Detailed progress, slower</small>
+                        </div>
+                    </div>
+                </label>
+                
+                <label class="radio-option" id="batchOption">
+                    <input type="radio" name="scrapeType" value="batch" id="batchRadio" checked>
+                    <div class="radio-label">
+                        <i class="fas fa-bolt"></i>
+                        <div>
+                            <strong>Batch Concurrent</strong>
+                            <br><small>Lightning fast processing</small>
+                        </div>
+                    </div>
+                </label>
+            </div>
+            
+            <div class="batch-options" id="batchOptions">
+                <label class="input-label">
+                    <i class="fas fa-tachometer-alt"></i> Concurrent Processing Speed
+                </label>
+                <select id="batchSize">
+                    <option value="5">🐌 Conservative (5 concurrent)</option>
+                    <option value="10" selected>⚡ Recommended (10 concurrent)</option>
+                    <option value="15">🚀 Aggressive (15 concurrent)</option>
+                    <option value="20">💨 Maximum (20 concurrent)</option>
+                </select>
+                <small style="color: var(--text-secondary); margin-top: 8px; display: block;">
+                    <i class="fas fa-info-circle"></i> Higher values process faster but may impact server performance
+                </small>
+            </div>
+            
+            <div class="url-input-container">
+                <label class="input-label" for="urlInput">
+                    <i class="fas fa-link"></i> Target Website URL
+                </label>
+                <input type="url" id="urlInput" placeholder="https://example.com" value="https://www.google.com">
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="startBtn" onclick="startScraping()">
+                    <i class="fas fa-play"></i>
+                    <span>Start Batch Scrape</span>
+                    <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
+                </button>
+                <button class="btn btn-secondary" id="clearBtn" onclick="clearProgress()">
+                    <i class="fas fa-trash-alt"></i>
+                    Clear Results
+                </button>
+            </div>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <i class="fas fa-chart-line"></i>
+                    Live Progress Monitor
+                </div>
+                <div class="progress-status" id="progressStatus">Ready</div>
+            </div>
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-line start">
+                    <span class="progress-timestamp">[Ready]</span>
+                    <span class="progress-message">🚀 WebScraper Pro initialized - Ready to extract data!</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <div class="results-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Extraction Results
+                </div>
+                <div class="download-buttons">
+                    <button class="download-btn json" onclick="downloadJSON()">
+                        <i class="fas fa-download"></i>
+                        JSON Export
+                    </button>
+                    <button class="download-btn docx" onclick="downloadDOCX()">
+                        <i class="fas fa-file-word"></i>
+                        DOCX Export
+                    </button>
+                </div>
+            </div>
+            
+            <div class="results-stats" id="resultsStats">
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-value" id="totalPagesValue">0</div>
+                        <div class="stat-label">Total Pages</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-value" id="successPagesValue">0</div>
+                        <div class="stat-label">Successful</div>
+                    </div>
+                    <div class="stat-card failed">
+                        <div class="stat-value" id="failedPagesValue">0</div>
+                        <div class="stat-label">Failed</div>
+                    </div>
+                    <div class="stat-card containers">
+                        <div class="stat-value" id="containersValue">0</div>
+                        <div class="stat-label">Containers</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-container" id="resultsContainer">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let eventSource;
+        let scrapedData = null;
+        let currentUrl = '';
+        let currentScrapeType = '';
+        
+        function startScraping() {
+            const url = document.getElementById('urlInput').value;
+            if (!url) {
+                showNotification('Please enter a valid URL', 'error');
+                return;
+            }
+            
+            const scrapeType = document.querySelector('input[name="scrapeType"]:checked').value;
+            const startBtn = document.getElementById('startBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const progressContainer = document.getElementById('progressContainer');
+            const resultsSection = document.getElementById('resultsSection');
+            const progressStatus = document.getElementById('progressStatus');
+            
+            // Clear all previous data completely
+            scrapedData = null;
+            currentUrl = url;
+            currentScrapeType = scrapeType;
+            
+            // Update UI for loading state
+            if (startBtn) {
+                startBtn.disabled = true;
+                const buttonSpan = startBtn.querySelector('span');
+                if (buttonSpan) buttonSpan.textContent = 'Processing...';
+            }
+            if (loadingSpinner) loadingSpinner.style.display = 'block';
+            if (progressStatus) {
+                progressStatus.textContent = 'Starting';
+                progressStatus.className = 'progress-status';
+            }
+            
+            progressContainer.innerHTML = '';
+            resultsSection.style.display = 'none';
+            clearStatsDisplay();
+            
+            console.log('Starting fresh scrape, all data cleared');
+            
+            // Close existing connection if any
+            if (eventSource) {
+                eventSource.close();
+            }
+            
+            if (scrapeType === 'single') {
+                // Single scrape - use simple endpoint
+                addProgressLine(`🚀 Starting single URL scrape...`, 'start');
+                addProgressLine(`🔍 Sending request to server...`, 'progress');
+                
+                fetch('http://localhost:8001/single-scrape', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received data:', data);
+                    addProgressLine(`✅ Scraping completed successfully!`, 'success');
+                    
+                    scrapedData = {
+                        main_url: data.url,
+                        total_pages_scraped: 1,
+                        successful_scrapes: 1,
+                        failed_scrapes: 0,
+                        detected_containers: [],
+                        results: [data]
+                    };
+                    
+                    displayResults(scrapedData);
+                    resetButtonState();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addProgressLine(`💥 Error: ${error.message}`, 'error');
+                    resetButtonState();
+                });
+            } else if (scrapeType === 'deep') {
+                // Deep scrape - use progress polling (sequential)
+                addProgressLine(`🚀 Starting deep scrape with detailed progress...`, 'start');
+                
+                fetch('http://localhost:8001/deep-scrape-with-progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Started job:', data.job_id);
+                    addProgressLine(`📋 Sequential job started: ${data.job_id}`, 'info');
+                    pollProgress(data.job_id);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addProgressLine(`💥 Error starting job: ${error.message}`, 'error');
+                    resetButtonState();
+                });
+            } else {
+                // Batch scrape - use concurrent processing
+                const batchSize = document.getElementById('batchSize').value;
+                addProgressLine(`⚡ Starting BATCH scrape with ${batchSize} concurrent requests...`, 'start');
+                
+                fetch(`http://localhost:8001/deep-scrape-batch?batch_size=${batchSize}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Started batch job:', data.job_id);
+                    addProgressLine(`⚡ Batch job started: ${data.job_id} (batch size: ${data.batch_size})`, 'info');
+                    pollProgress(data.job_id);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addProgressLine(`💥 Error starting batch job: ${error.message}`, 'error');
+                    resetButtonState();
+                });
+            }
+        }
+        
+        function pollProgress(jobId) {
+            let lastMessageCount = 0;
+            
+            const poll = () => {
+                fetch(`http://localhost:8001/progress/${jobId}`)
+                .then(response => response.json())
+                .then(progress => {
+                    // Add new messages
+                    if (progress.messages && progress.messages.length > lastMessageCount) {
+                        for (let i = lastMessageCount; i < progress.messages.length; i++) {
+                            const msg = progress.messages[i];
+                            addProgressLine(msg.message, msg.type);
+                        }
+                        lastMessageCount = progress.messages.length;
+                    }
+                    
+                    // Check if completed
+                    if (progress.status === 'completed' && progress.results) {
+                        scrapedData = progress.results;
+                        displayResults(scrapedData);
+                        // displayResults already calls resetButtonState(), no need to call it again
+                        return; // Stop polling
+                    }
+                    
+                    if (progress.status === 'error') {
+                        addProgressLine('💥 Scraping job failed', 'error');
+                        resetButtonState();
+                        return; // Stop polling
+                    }
+                    
+                    // Continue polling if still running
+                    if (progress.status !== 'completed' && progress.status !== 'error') {
+                        setTimeout(poll, 500); // Poll every 500ms
+                    }
+                })
+                .catch(error => {
+                    console.error('Polling error:', error);
+                    // Only add progress line if container exists
+                    const progressContainer = document.getElementById('progressContainer');
+                    if (progressContainer) {
+                        addProgressLine(`💥 Progress polling error: ${error.message}`, 'error');
+                    }
+                    
+                    // Safely reset button state
+                    try {
+                        resetButtonState();
+                    } catch (resetError) {
+                        console.error('Error resetting button state:', resetError);
+                        // Fallback: just enable the button if it exists
+                        const startBtn = document.getElementById('startBtn');
+                        if (startBtn) {
+                            startBtn.disabled = false;
+                        }
+                    }
+                });
+            };
+            
+            poll(); // Start polling
+        }
+        
+        function addProgressLine(message, type) {
+            const progressContainer = document.getElementById('progressContainer');
+            if (!progressContainer) return;
+            
+            const line = document.createElement('div');
+            line.className = `progress-line ${type} slide-up`;
+            
+            const timestamp = document.createElement('span');
+            timestamp.className = 'progress-timestamp';
+            timestamp.textContent = `[${new Date().toLocaleTimeString()}]`;
+            
+            const messageSpan = document.createElement('span');
+            messageSpan.className = 'progress-message';
+            messageSpan.textContent = message;
+            
+            line.appendChild(timestamp);
+            line.appendChild(messageSpan);
+            progressContainer.appendChild(line);
+            progressContainer.scrollTop = progressContainer.scrollHeight;
+            
+            // Update progress status
+            const progressStatus = document.getElementById('progressStatus');
+            if (progressStatus) {
+                if (type === 'complete') {
+                    progressStatus.textContent = 'Completed';
+                    progressStatus.style.background = 'rgba(52, 168, 83, 0.2)';
+                    progressStatus.style.color = 'var(--accent-green)';
+                } else if (type === 'error') {
+                    progressStatus.textContent = 'Error';
+                    progressStatus.style.background = 'rgba(234, 67, 53, 0.2)';
+                    progressStatus.style.color = 'var(--accent-red)';
+                } else if (type === 'scraping') {
+                    progressStatus.textContent = 'Scraping';
+                    progressStatus.style.background = 'rgba(251, 188, 4, 0.2)';
+                    progressStatus.style.color = 'var(--accent-orange)';
+                } else if (type === 'start') {
+                    progressStatus.textContent = 'Running';
+                    progressStatus.style.background = 'rgba(66, 133, 244, 0.2)';
+                    progressStatus.style.color = 'var(--accent-blue)';
+                }
+            }
+        }
+        
+        function clearProgress() {
+            const progressContainer = document.getElementById('progressContainer');
+            if (progressContainer) {
+                progressContainer.innerHTML = `
+                    <div class="progress-line start">
+                        <span class="progress-timestamp">[Ready]</span>
+                        <span class="progress-message">🚀 WebScraper Pro initialized - Ready to extract data!</span>
+                    </div>
+                `;
+            }
+            const resultsSection = document.getElementById('resultsSection');
+            if (resultsSection) resultsSection.style.display = 'none';
+            
+            const resultsContainer = document.getElementById('resultsContainer');
+            if (resultsContainer) resultsContainer.innerHTML = '';
+            
+            const progressStatus = document.getElementById('progressStatus');
+            if (progressStatus) {
+                progressStatus.textContent = 'Ready';
+                progressStatus.style.background = 'rgba(52, 168, 83, 0.2)';
+                progressStatus.style.color = 'var(--accent-green)';
+            }
+            
+            clearStatsDisplay();
+            scrapedData = null;
+            currentUrl = '';
+            currentScrapeType = '';
+            
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+            
+            resetButtonState();
+            console.log('Cleared all data and UI');
+        }
+        
+        function displayResults(data) {
+            console.log('displayResults called with:', data);
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsStats = document.getElementById('resultsStats');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            console.log('Elements found:', { resultsSection, resultsStats, resultsContainer });
+            
+            // Show results section
+            resultsSection.style.display = 'block';
+            console.log('Results section should now be visible');
+            
+            // Display stats
+            resultsStats.innerHTML = `
+                <strong>📈 Summary:</strong><br>
+                🌍 Main URL: ${data.main_url}<br>
+                📄 Total Pages: ${data.results ? data.results.length : 0}<br>
+                ✅ Successful: ${data.successful_scrapes || 0}<br>
+                ❌ Failed: ${data.failed_scrapes || 0}<br>
+                📦 Detected Containers: ${data.detected_containers ? data.detected_containers.join(', ') : 'None'}
+            `;
+            
+            // Display results
+            if (data.results && data.results.length > 0) {
+                resultsContainer.innerHTML = data.results.map((result, index) => `
+                    <div class="result-item">
+                        <div class="result-header-clickable" onclick="toggleResultDetails(${index})">
+                            <div class="result-summary">
+                                <div class="result-url" style="color: var(--accent-blue); font-weight: 500; margin-bottom: 4px;">
+                                    🔗 ${result.url}
+                                </div>
+                                <div class="result-title" style="color: var(--text-primary); font-size: 0.95rem;">
+                                    📝 ${result.title || 'No Title'}
+                                </div>
+                            </div>
+                            <div class="result-chevron" id="chevron-${index}">▶</div>
+                        </div>
+                        <div class="result-details" id="details-${index}">
+                            <div class="result-details-content">
+                                ${result.container_id || result.anchor_text ? `
+                                <div class="result-meta">
+                                    ${result.container_id ? `<strong>Container:</strong> #${result.container_id} | ` : ''}
+                                    ${result.anchor_text ? `<strong>Link Text:</strong> "${result.anchor_text}"` : ''}
+                                </div>
+                                ` : ''}
+                                <div class="result-content">${escapeHtml(result.text || 'No content available')}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                resultsContainer.innerHTML = '<div class="progress-line error">No results found</div>';
+            }
+            
+            // Update stats display using the new function
+            updateStatsDisplay(data);
+            
+            // Reset button state
+            resetButtonState();
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function downloadJSON() {
+            if (!scrapedData) {
+                alert('No data to download. Please run a scrape first.');
+                return;
+            }
+            
+            const jsonStr = JSON.stringify(scrapedData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `scraped_data_${currentScrapeType}_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function downloadDOCX() {
+            if (!scrapedData) {
+                showNotification('No data to download. Please run a scrape first.', 'error');
+                return;
+            }
+            
+            // Determine the correct endpoint based on scrape type
+            let endpoint;
+            if (currentScrapeType === 'single') {
+                endpoint = 'http://localhost:8001/single-scrape-docx';
+            } else {
+                // Both 'deep' and 'batch' modes use the deep-scrape-docx endpoint
+                endpoint = 'http://localhost:8001/deep-scrape-docx';
+            }
+            
+            showNotification('Generating DOCX file...', 'info');
+            
+            // Use fetch to download DOCX
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: currentUrl })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                if (blob.size === 0) {
+                    throw new Error('Received empty file from server');
+                }
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `scraped_data_${currentScrapeType}_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('DOCX file downloaded successfully!', 'info');
+            })
+            .catch(error => {
+                console.error('DOCX download error:', error);
+                showNotification(`Failed to download DOCX: ${error.message}`, 'error');
+            });
+        }
+        
+        // Handle Enter key in input
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startScraping();
+            }
+        });
+        
+        // Legacy function removed - using the improved version below
+        
+        // Add event listeners to radio buttons
+        document.getElementById('singleRadio').addEventListener('change', updateButtonText);
+        document.getElementById('deepRadio').addEventListener('change', updateButtonText);
+        document.getElementById('batchRadio').addEventListener('change', updateButtonText);
+        
+        // Toggle function for accordion-style results
+        let currentlyOpenIndex = -1;
+        
+        function toggleResultDetails(index) {
+            const details = document.getElementById(`details-${index}`);
+            const chevron = document.getElementById(`chevron-${index}`);
+            const header = details.previousElementSibling;
+            
+            // Close previously open item
+            if (currentlyOpenIndex !== -1 && currentlyOpenIndex !== index) {
+                const prevDetails = document.getElementById(`details-${currentlyOpenIndex}`);
+                const prevChevron = document.getElementById(`chevron-${currentlyOpenIndex}`);
+                const prevHeader = prevDetails.previousElementSibling;
+                
+                prevDetails.classList.remove('expanded');
+                prevChevron.classList.remove('expanded');
+                prevChevron.textContent = '▶';
+                prevHeader.classList.remove('active');
+            }
+            
+            // Toggle current item
+            const isExpanded = details.classList.contains('expanded');
+            
+            if (isExpanded) {
+                details.classList.remove('expanded');
+                chevron.classList.remove('expanded');
+                chevron.textContent = '▶';
+                header.classList.remove('active');
+                currentlyOpenIndex = -1;
+            } else {
+                details.classList.add('expanded');
+                chevron.classList.add('expanded');
+                chevron.textContent = '▼';
+                header.classList.add('active');
+                currentlyOpenIndex = index;
+            }
+        }
+        
+        // Utility functions
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 1000;
+                padding: 16px 24px; border-radius: 8px; color: white;
+                background: ${type === 'error' ? 'var(--accent-red)' : 'var(--accent-blue)'};
+                box-shadow: var(--shadow-heavy); animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+        
+        function updateStatsDisplay(data) {
+            const totalPagesEl = document.getElementById('totalPagesValue');
+            const successPagesEl = document.getElementById('successPagesValue');
+            const failedPagesEl = document.getElementById('failedPagesValue');
+            const containersEl = document.getElementById('containersValue');
+            const totalScrapedEl = document.getElementById('totalScraped');
+            const successRateEl = document.getElementById('successRate');
+            
+            if (totalPagesEl) totalPagesEl.textContent = data.results ? data.results.length : 0;
+            if (successPagesEl) successPagesEl.textContent = data.successful_scrapes || 0;
+            if (failedPagesEl) failedPagesEl.textContent = data.failed_scrapes || 0;
+            if (containersEl) containersEl.textContent = data.detected_containers ? data.detected_containers.length : 0;
+            
+            // Update header stats
+            if (totalScrapedEl) {
+                const currentTotal = parseInt(totalScrapedEl.textContent) || 0;
+                const newTotal = currentTotal + (data.results ? data.results.length : 0);
+                totalScrapedEl.textContent = newTotal;
+            }
+            
+            if (successRateEl) {
+                const successRate = data.successful_scrapes && data.total_links_found ? 
+                    Math.round((data.successful_scrapes / (data.successful_scrapes + data.failed_scrapes)) * 100) : 100;
+                successRateEl.textContent = successRate + '%';
+            }
+        }
+        
+        function clearStatsDisplay() {
+            const totalPagesEl = document.getElementById('totalPagesValue');
+            const successPagesEl = document.getElementById('successPagesValue');
+            const failedPagesEl = document.getElementById('failedPagesValue');
+            const containersEl = document.getElementById('containersValue');
+            
+            if (totalPagesEl) totalPagesEl.textContent = '0';
+            if (successPagesEl) successPagesEl.textContent = '0';
+            if (failedPagesEl) failedPagesEl.textContent = '0';
+            if (containersEl) containersEl.textContent = '0';
+        }
+        
+        function resetButtonState() {
+            try {
+                const startBtn = document.getElementById('startBtn');
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                const progressStatus = document.getElementById('progressStatus');
+                
+                if (startBtn) {
+                    startBtn.disabled = false;
+                } else {
+                    console.warn('startBtn element not found in resetButtonState');
+                }
+                
+                if (loadingSpinner) {
+                    loadingSpinner.style.display = 'none';
+                } else {
+                    console.warn('loadingSpinner element not found in resetButtonState');
+                }
+                
+                if (progressStatus) {
+                    progressStatus.textContent = 'Ready';
+                    progressStatus.style.background = 'rgba(52, 168, 83, 0.2)';
+                    progressStatus.style.color = 'var(--accent-green)';
+                } else {
+                    console.warn('progressStatus element not found in resetButtonState');
+                }
+                
+                updateButtonText();
+            } catch (error) {
+                console.error('Error in resetButtonState:', error);
+                // Minimal fallback
+                const startBtn = document.getElementById('startBtn');
+                if (startBtn) {
+                    startBtn.disabled = false;
+                }
+            }
+        }
+        
+        // Update button text and UI based on selected option
+        function updateButtonText() {
+            const checkedRadio = document.querySelector('input[name="scrapeType"]:checked');
+            if (!checkedRadio) return;
+            
+            const scrapeType = checkedRadio.value;
+            const startBtn = document.getElementById('startBtn');
+            const batchOptions = document.getElementById('batchOptions');
+            
+            // Update radio option styling
+            document.querySelectorAll('.radio-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            if (startBtn && startBtn.querySelector('span')) {
+                if (scrapeType === 'single') {
+                    startBtn.querySelector('span').textContent = 'Start Single Scrape';
+                    if (batchOptions) batchOptions.classList.add('hidden');
+                    const singleOption = document.getElementById('singleOption');
+                    if (singleOption) singleOption.classList.add('active');
+                } else if (scrapeType === 'deep') {
+                    startBtn.querySelector('span').textContent = 'Start Deep Scrape';
+                    if (batchOptions) batchOptions.classList.add('hidden');
+                    const deepOption = document.getElementById('deepOption');
+                    if (deepOption) deepOption.classList.add('active');
+                } else {
+                    startBtn.querySelector('span').textContent = 'Start Batch Scrape';
+                    if (batchOptions) batchOptions.classList.remove('hidden');
+                    const batchOption = document.getElementById('batchOption');
+                    if (batchOption) batchOption.classList.add('active');
+                }
+            }
+        }
+        
+        // Set initial button text
+        updateButtonText();
+        
+    </script>
+</body>
+</html>
